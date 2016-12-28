@@ -28,3 +28,4 @@ img = conf.get('main', 'img')
 
 notify = Notifier(token, bot, channel)
 notify.sendSlackNotification(msg, img)
+
