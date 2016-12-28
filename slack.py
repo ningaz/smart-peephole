@@ -1,21 +1,30 @@
 from slacker import Slacker
+import configparser
 
 class Notifier():
-    msgQueue = []
-    slack = Slacker('xoxb-98814092768-gDZCppKCakyAZpio3KYw72Tx')
+    def __init__(self,token, botname, channel):
+        self.msgQueue = []
+        self.slack = Slacker(token)
+        self.channel = channel
+        self.bot = bot
     def getNotification(self):
-        #print len(self.msgQueue)
         if  len(self.msgQueue) > 1:
             return self.msgQueue.pop(0)
         return ''
     def sendSlackNotification(self, msg, file = None):
-        #self.slack.chat.post_message('#vaapi', msg, '@vabot',icon_emoji='vhs',as_user=True)
-        if(file != None):     
-		self.slack.files.upload(file_=file,filetype='jpeg',title='New guest',channels='#vaapi')
-
+        #self.slack.chat.post_message(self.channel, msg, self.bot,icon_emoji='vhs',as_user=True)
+        if(file != None):
+            self.slack.files.upload(file_=file,filetype='jpeg',title=msg,channels=self.channel)            
     def setNotification(self, msg):
         self.msgQueue.append(msg)
-        #print msg
-		
-notify = Notifier()		
-notify.sendSlackNotification(str('New guest'),'/home/root/image.jpeg')
+
+conf = configparser.RawConfigParser()
+conf.read('config.cfg')
+token = conf.get('slack', 'token')
+bot = conf.get('slack', 'botname')
+channel = conf.get('slack', 'channel')
+msg = conf.get('slack', 'msg')
+img = conf.get('main', 'img')
+
+notify = Notifier(token, bot, channel)
+notify.sendSlackNotification(msg, img)
